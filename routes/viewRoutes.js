@@ -14,7 +14,7 @@ router.get(
   '/my-tours',
   bookingController.createBookingCheckout,
   authController.protect,
-  viewsController.getMyTours,
+  viewController.getMyTours,
 );
 
 router.post(
