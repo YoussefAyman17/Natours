@@ -58,6 +58,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+app.set('trust proxy', 1);
+
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
