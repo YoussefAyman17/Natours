@@ -48,10 +48,6 @@ const connectDB = async () => {
 
   // Await the connection
   await mongoose.connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
     family: 4,
