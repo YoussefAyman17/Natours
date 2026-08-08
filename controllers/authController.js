@@ -72,6 +72,7 @@ exports.logout = (req, res) => {
       req.headers['x-forwarded-proto'] === 'https' ||
       process.env.NODE_ENV === 'production',
   });
+  console.log('logout   !');
   res.status(200).json({ status: 'success' });
 };
 
@@ -211,8 +212,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('+password');
 
-  console.log(user.password);
-  console.log(req.body.currentPassword);
+  // console.log(user.password);
+  // console.log(req.body.currentPassword);
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError('Your current password is wrong.', 401));
   }
