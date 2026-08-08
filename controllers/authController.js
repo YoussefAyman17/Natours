@@ -72,7 +72,7 @@ exports.logout = (req, res) => {
       req.headers['x-forwarded-proto'] === 'https' ||
       process.env.NODE_ENV === 'production',
   });
-  console.log('logout   !');
+  console.log('logout   !', res.cookies);
   res.status(200).json({ status: 'success' });
 };
 
