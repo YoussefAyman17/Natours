@@ -46,7 +46,13 @@ app.use(
         'https://unpkg.com',
       ],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'blob:', 'https://*.openfreemap.org'],
+      imgSrc: [
+        "'self'",
+        'data:',
+        'blob:',
+        'https://*.openfreemap.org',
+        'https://res.cloudinary.com',
+      ],
       scriptSrc: ["'self'", 'https://unpkg.com', 'https://js.stripe.com'],
       frameSrc: ["'self'", 'https://js.stripe.com'],
 
