@@ -29,6 +29,8 @@ process.on('SIGTERM', () => {
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');
+app.enable('trust proxy');
+app.set('trust proxy', 1);
 
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASSWORD);
 mongoose
