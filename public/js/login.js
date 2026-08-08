@@ -27,6 +27,9 @@ export const logout = async () => {
     const res = await axios({
       method: 'GET',
       url: '/api/v1/users/logout',
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
     });
     if ((res.data.status = 'success')) location.reload(true);
   } catch (err) {

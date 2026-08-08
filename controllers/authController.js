@@ -69,6 +69,7 @@ exports.logout = (req, res) => {
     httpOnly: true,
     secure: true,
   });
+  res.set('Cache-Control', 'no-store');
   res.status(200).json({ status: 'success' });
 };
 
