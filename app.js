@@ -25,7 +25,7 @@ app.enable('trust proxy');
 app.set('trust proxy', 1);
 
 app.use(cors());
-app.options('*', cors());
+app.options('/{*path}', cors());
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
