@@ -13,15 +13,15 @@ module.exports = class Email {
   }
 
   newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      return Nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
-        },
-      });
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   return Nodemailer.createTransport({
+    //     service: 'SendGrid',
+    //     auth: {
+    //       user: process.env.SENDGRID_USERNAME,
+    //       pass: process.env.SENDGRID_PASSWORD,
+    //     },
+    //   });
+    // }
     const TOKEN = process.env.EMAIL_TOKEN;
     return Nodemailer.createTransport(
       MailtrapTransport({
