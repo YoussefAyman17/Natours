@@ -41,6 +41,14 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
+const createBookingCheckout = async (session) => {
+  const tour = session.client_reference_id;
+  const user = (await User.findOne({ email: session.customer_email })).id;
+  const price = session.amount_total / 100;
+
+  await Booking.create({ tour, user, price });
+};
+
 exports.webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
   let event;
@@ -58,17 +66,6 @@ exports.webhookCheckout = (req, res, next) => {
 
   res.status(200).json({ received: true });
 };
-
-exports.createBookingCheckout = catchAsync(async (session) => {
-  // This is only TEMPORARY, because it's UNSECURE: everyone can make bookings without paying
-  const tour = session.client_reference_id;
-  const user = (await User.find({ email: session.customer_email })).id;
-  const price = session.amount_total / 100;
-
-  await Booking.create({ tour, user, price });
-
-  res.redirect(req.originalUrl.split('?')[0]);
-});
 
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.getOne(Booking);
