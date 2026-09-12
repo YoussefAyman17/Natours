@@ -1322,3 +1322,22 @@ body {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
 }
+
+.reviews__rating--interactive .reviews__star {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.reviews__rating--interactive .reviews__star:hover {
+  transform: scale(1.2);
+}
+
+.modal.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.modal.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
