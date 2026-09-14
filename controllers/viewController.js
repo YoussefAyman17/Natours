@@ -1,11 +1,12 @@
 const Tour = require('../models/tourModel');
+const User = require('../models/userModel');
 const Review = require('../models/reviewModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
-  const tours = await Tour.find();
+  const tours = await Tour.find({ secretTour: false });
   res.status(200).render('overview', {
     title: 'All Tours',
     tours,
@@ -96,5 +97,15 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
   res.status(200).render('myReviews', {
     title: 'My Reviews',
     reviews,
+  });
+});
+
+exports.getManageTours = catchAsync(async (req, res, next) => {
+  const tours = await Tour.find();
+  const users = await User.find({ role: { $in: ['guide', 'lead-guide'] } });
+  res.status(200).render('manageTours', {
+    title: 'Manage Tours',
+    tours,
+    users,
   });
 });

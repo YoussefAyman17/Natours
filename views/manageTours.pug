@@ -1,0 +1,149 @@
+extends base
+
+block content
+  main.main
+    .admin-container
+      .admin-header
+        h2.heading-secondary Manage Tours
+        button.btn.btn--green.btn--small#btn-open-create-modal + Create New Tour
+
+      .admin-table-container
+        table.admin-table
+          thead
+            tr
+              th Image
+              th Name
+              th Price
+              th Size
+              th Difficulty
+              th Rating
+              th Actions
+          tbody#tours-table-body
+            each tour in tours
+              tr(data-id=tour.id)
+                td
+                  img.admin-table__img(src=`${tour.imageCover.startsWith('http') ? tour.imageCover : '/img/tours/'+tour.imageCover}`, alt=tour.name)
+                td.admin-table__name= tour.name
+                td=`$${tour.price}`
+                td=`${tour.maxGroupSize} people`
+                td
+                  span.tag(class=`tag--${tour.difficulty}`)= tour.difficulty
+                td= `${tour.ratingsAverage} ⭐ (${tour.ratingsQuantity})`
+                td.admin-table__actions
+                  button.btn-action.btn-action--edit(data-tour=`${JSON.stringify(tour)}`) Edit
+                  button.btn-action.btn-action--delete(data-id=tour.id) Delete
+
+  // --- CREATE / EDIT TOUR MODAL ---
+  .modal.hidden#tour-modal
+    .modal__content
+      button.modal__close#btn-close-modal &times;
+      h3.heading-secondary.ma-bt-md#modal-title Create New Tour
+      
+      form.form.form--manage-tour#form-tour
+        input#tour-id(type='hidden')
+        
+        .form__group
+          label.form__label(for='name') Tour Name
+          input#name.form__input(type='text', required, placeholder='e.g. The Forest Hiker', name='name')
+        
+        .form__group.form__group--inline
+          div
+            label.form__label(for='price') Price ($)
+            input#price.form__input(type='number', required, min='1',name='price')
+          div
+            label.form__label(for='maxGroupSize') Max Group Size
+            input#maxGroupSize.form__input(type='number', required, min='1',name='maxGroupSize')
+        
+        .form__group.form__group--inline
+          div
+            label.form__label(for='difficulty') Difficulty
+            select#difficulty.form__input(name='difficulty')
+              option(value='easy') Easy
+              option(value='medium') Medium
+              option(value='difficult') Difficult
+          div
+            label.form__label(for='duration') Duration (days)
+            input#duration.form__input(type='number', required, min='1', name='duration')
+
+        .form__group
+          label.form__label(for='summary') Summary
+          textarea#summary.form__input(rows='2', required, placeholder='Brief description of the tour',name='summary')
+
+        .form__group
+          label.form__label(for='description') Full Description
+          textarea#description.form__input(rows='4', placeholder='Detailed itinerary and overview',name='description')
+
+        .form__group
+          label.form__label(for='imageCover') Cover Image
+          input#imageCover.form__input(type='file', accept='image/*',name='imageCover')
+
+        .form__group
+          label.form__label(for='images') Gallery Images (up to 3)
+          input#images.form__input(type='file', accept='image/*', multiple,name='images')
+
+        .form__group.form__group--checkbox
+          input#secretTour.form__checkbox(type='checkbox',name='secretTour')
+          label.form__label(for='secretTour') Mark as Secret Tour
+
+        .form__group
+          label.form__label(for='startDates',name='startDates') Start Dates (comma separated, e.g. 2026-10-15, 2026-11-20)
+          input#startDates.form__input(type='text', placeholder='YYYY-MM-DD, YYYY-MM-DD')
+
+        .form__group.form__group--inline
+          div
+            label.form__label(for='startLng') Start Longitude
+            input#startLng.form__input(type='number', step='any', placeholder='-118.113491',name='startLng')
+          div
+            label.form__label(for='startLat') Start Latitude
+            input#startLat.form__input(type='number', step='any', placeholder='34.111745',name='startLat')
+
+        .form__group.form__group--inline
+          div
+            label.form__label(for='startAddress') Start Address
+            input#startAddress.form__input(type='text', placeholder='123 Main St, CA',name='startAddress')
+          div
+            label.form__label(for='startDescription') Start Description
+            input#startDescription.form__input(type='text', placeholder='Location description',name='startDescription')
+
+        //- --- DYNAMIC LOCATIONS SECTION ---
+        .form__group
+          .form__group-header
+            label.form__label Tour Itinerary Stops (Locations)
+            button.btn.btn--small.btn--green#btn-add-location(type='button') + Add Stop
+
+          #locations-container
+            //- Dynamic location cards will be injected here via JavaScript
+
+        //- Template hidden structure used by JS to clone new location entries
+        template#location-template
+          .location-card
+            button.btn-remove-location(type='button') &times;
+            .form__group.form__group--inline
+              div
+                label.form__label Day
+                input.location-day.form__input(type='number', min='1', placeholder='e.g. 1')
+              div
+                label.form__label Description
+                input.location-desc.form__input(type='text', placeholder='e.g. Living Desert Trail')
+            .form__group.form__group--inline
+              div
+                label.form__label Address
+                input.location-address.form__input(type='text', placeholder='e.g. 123 Palm Springs')
+              div
+                label.form__label Lng, Lat (comma separated)
+                input.location-coords.form__input(type='text', placeholder='-116.5453, 33.8303')
+        .form__group
+          label.form__label Assign Tour Guides
+          .form__checkbox-group#guides-list
+            each guide in users
+              if guide.role === 'guide' || guide.role === 'lead-guide'
+                .form__checkbox-item
+                  input.form__checkbox.guide-checkbox(
+                    type='checkbox', 
+                    id=`guide-${guide.id}`, 
+                    value=guide.id
+                  )
+                  label.form__label--checkbox(for=`guide-${guide.id}`)= `${guide.name} (${guide.role.replace('-', ' ')})`
+
+        .form__group.text-right
+          button.btn.btn--green#btn-save-tour Save Tour

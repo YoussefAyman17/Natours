@@ -34,9 +34,11 @@ router
   .post(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
     tourController.createTour,
   );
-
+router.route('/getNonSecretTours').get(tourController.getAllNonSecretTours)
 router
   .route('/:id')
   .get(tourController.getTour)

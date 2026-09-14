@@ -38,7 +38,7 @@ const tourSchema = new mongoose.Schema(
     },
     ratingsQuantity: {
       type: Number,
-      dafault: 0,
+      default: 0,
     },
     price: {
       type: Number,
@@ -130,10 +130,10 @@ tourSchema.pre('save', function () {
 });
 
 // QUERY MIDDLEWARE
-tourSchema.pre(/^find/, function () {
-  this.find({ secretTour: { $ne: true } });
-  this.start = Date.now();
-});
+// tourSchema.pre(/^find/, function () {
+//   this.find({ secretTour: { $ne: true } });
+//   this.start = Date.now();
+// });
 
 tourSchema.pre(/^find/, function () {
   this.populate({

@@ -13,6 +13,12 @@ router.get('/me', authController.protect, viewController.getAccount);
 
 router.get('/my-tours', authController.protect, viewController.getMyTours);
 router.get('/my-reviews', authController.protect, viewController.getMyReviews);
+router.get(
+  '/manage-tours',
+  authController.protect,
+  authController.restrictTo('admin', 'lead-guide'),
+  viewController.getManageTours,
+);
 
 router.post(
   '/submit-user-data',
