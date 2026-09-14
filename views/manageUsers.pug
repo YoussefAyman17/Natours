@@ -1,0 +1,75 @@
+extends base
+
+block content
+  main.main
+    .manage-container
+      .manage-header
+        h2.heading-secondary Manage Users
+        .manage-actions
+            input#search-users.form__input.form__input--search(type='text', placeholder='Search by name or email...')
+            select#filter-role.form__input.form__input--select
+                option(value='all') All Roles
+                option(value='user') User
+                option(value='guide') Guide
+                option(value='lead-guide') Lead Guide
+                option(value='admin') Admin
+            button.btn.btn--small.btn--green#btn-open-user-modal + Add New User
+
+      table.manage-table
+        thead
+          tr
+            th Photo
+            th Name
+            th Email
+            th Role
+            th Status
+            th Actions
+        tbody#users-table-body
+          each user in users
+            tr
+              td
+                img.user-avatar(src=`${user.photo.startsWith("http") ? user.photo : "img/users/"+user.photo}`, alt=user.name)
+              td= user.name
+              td= user.email
+              td
+                span.badge(class=`badge--${user.role}`)= user.role
+              td
+                span.badge(class=user.active !== false ? 'badge--active' : 'badge--inactive')
+                  = user.active !== false ? 'Active' : 'Inactive'
+              td
+                .table-actions
+                  button.btn-action.btn-action--edit(data-user=JSON.stringify(user)) Edit
+                  button.btn-action.btn-action--delete(data-id=user.id) Delete
+
+    //- Modal Window
+    .modal.hidden#user-modal
+      .modal__content
+        button.modal__close#btn-close-user-modal &times;
+        h2.heading-secondary.ma-bt-md#user-modal-title Edit User
+        
+        form.form#form-user
+          input#user-id(type='hidden')
+          
+          .form__group
+            label.form__label(for='user-name') Name
+            input.form__input#user-name(type='text', required, name='name')
+
+          .form__group
+            label.form__label(for='user-email') Email address
+            input.form__input#user-email(type='email', required, name='email')
+
+          .form__group
+            label.form__label(for='user-role') Role
+            select.form__input#user-role(name='role')
+              option(value='user') User
+              option(value='guide') Guide
+              option(value='lead-guide') Lead Guide
+              option(value='admin') Admin
+
+          .form__group.form__photo-upload
+            img.form__user-photo#user-photo-preview(src='/img/users/default.jpg', alt='User photo')
+            input.form__upload#user-photo(type='file', accept='image/*', name='photo')
+            label(for='user-photo') Choose new photo
+
+          .form__group
+            button.btn.btn--green.btn--save-user Save Changes

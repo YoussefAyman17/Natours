@@ -109,3 +109,20 @@ exports.getManageTours = catchAsync(async (req, res, next) => {
     users,
   });
 });
+
+const APIFeatures = require('../utils/apiFeatures');
+
+exports.getManageUsers = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(User.find(), req.query)
+    .filter()
+    .sort('name')
+    .limitFields()
+    .paginate();
+
+  const users = await features.query;
+
+  res.status(200).render('manageUsers', {
+    title: 'Manage Users',
+    users,
+  });
+});

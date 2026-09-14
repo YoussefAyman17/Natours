@@ -4,13 +4,24 @@ class APIFeatures {
     this.queryString = queryString;
   }
   filter() {
+    // 1A) Create shallow copy & exclude reserved keys
     const queryObj = { ...this.queryString };
-    const excludedFields = ['sort', 'page', 'limit', 'fields'];
-    excludedFields.forEach((field) => delete queryObj[field]);
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
+    excludedFields.forEach((el) => delete queryObj[el]);
 
+    // 1B) Advanced filtering ($gte, $gt, $lte, $lt)
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(lt|lte|gt|gte)\b/g, (match) => `$${match}`);
-    this.query = this.query.find(JSON.parse(queryStr));
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    const finalQuery = JSON.parse(queryStr);
+
+    // 1C) Add dynamic text search ($or for name or email)
+    if (this.queryString.search) {
+      const searchRegex = new RegExp(this.queryString.search, 'i');
+      finalQuery.$or = [{ name: searchRegex }, { email: searchRegex }];
+    }
+
+    // Pass final constructed query object to Mongoose
+    this.query = this.query.find(finalQuery);
     return this;
   }
   sort() {

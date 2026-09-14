@@ -55,7 +55,8 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   const result = await uploadPromise;
 
   req.file.filename = result.secure_url;
-
+  req.body.photo = result.secure_url;
+  // console.log(req.file.filename);
   next();
 });
 

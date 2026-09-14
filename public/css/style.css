@@ -1528,3 +1528,130 @@ body {
   color: #eb4d4b;
   cursor: pointer;
 }
+
+.manage-container {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 3rem;
+}
+
+.manage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.manage-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.manage-table th,
+.manage-table td {
+  padding: 1.2rem 1.5rem;
+  text-align: left;
+  font-size: 1.4rem;
+  border-bottom: 1px solid #eee;
+}
+
+.manage-table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+  color: #555;
+}
+
+.user-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge--admin {
+  background-color: #ffeaa7;
+  color: #d63031;
+}
+.badge--lead-guide {
+  background-color: #74b9ff;
+  color: #0984e3;
+}
+.badge--guide {
+  background-color: #81ecec;
+  color: #00cec9;
+}
+.badge--user {
+  background-color: #dfe6e9;
+  color: #2d3436;
+}
+
+.badge--active {
+  background-color: #badc58;
+  color: #6ab04c;
+}
+.badge--inactive {
+  background-color: #ffbe76;
+  color: #eb4d4b;
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.btn-action {
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-action--edit {
+  color: #0984e3;
+}
+.btn-action--delete {
+  color: #d63031;
+}
+
+.manage-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.form__input--select {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.form__input--search {
+  padding: 0.8rem 1.4rem;
+  font-size: 1.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 26rem;
+  transition: all 0.2s;
+}
+
+.form__input--search:focus {
+  outline: none;
+  border-color: #55c57a;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+}

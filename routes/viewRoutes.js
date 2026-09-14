@@ -20,6 +20,13 @@ router.get(
   viewController.getManageTours,
 );
 
+router.get(
+  '/manage-users',
+  authController.protect,
+  authController.restrictTo('admin'),
+  viewController.getManageUsers,
+);
+
 router.post(
   '/submit-user-data',
   authController.protect,

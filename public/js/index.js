@@ -32,6 +32,144 @@ const locationsContainer = document.getElementById('locations-container');
 const addLocationBtn = document.getElementById('btn-add-location');
 const locationTemplate = document.getElementById('location-template');
 
+// ########### manage users #####################
+
+import { saveUser, deleteUser } from './manageUsers';
+const userModal = document.getElementById('user-modal');
+const userModalTitle = document.getElementById('user-modal-title');
+const userForm = document.getElementById('form-user');
+const openUserModalBtn = document.getElementById('btn-open-user-modal');
+const closeUserModalBtn = document.getElementById('btn-close-user-modal');
+const usersTableBody = document.getElementById('users-table-body');
+
+const closeUserModal = () => userModal && userModal.classList.add('hidden');
+
+if (openUserModalBtn) {
+  openUserModalBtn.addEventListener('click', () => {
+    userForm.reset();
+    document.getElementById('user-id').value = '';
+    document.getElementById('user-photo-preview').src =
+      '/img/users/default.jpg';
+    userModalTitle.textContent = 'Add New User';
+    userModal.classList.remove('hidden');
+  });
+}
+
+if (closeUserModalBtn)
+  closeUserModalBtn.addEventListener('click', closeUserModal);
+
+if (userModal) {
+  userModal.addEventListener('click', (e) => {
+    if (e.target === userModal) closeUserModal();
+  });
+}
+
+// Table Event Delegation (Edit / Delete)
+if (usersTableBody) {
+  usersTableBody.addEventListener('click', (e) => {
+    const editBtn = e.target.closest('.btn-action--edit');
+    const deleteBtn = e.target.closest('.btn-action--delete');
+
+    if (editBtn) {
+      const user = JSON.parse(editBtn.dataset.user);
+      document.getElementById('user-id').value = user._id || user.id;
+      document.getElementById('user-name').value = user.name;
+      document.getElementById('user-email').value = user.email;
+      document.getElementById('user-role').value = user.role;
+      document.getElementById('user-photo-preview').src =
+        `${user.photo.startsWith('http') ? user.photo : '/img/users/' + user.photo}`;
+
+      userModalTitle.textContent = 'Edit User';
+      userModal.classList.remove('hidden');
+    }
+
+    if (deleteBtn) {
+      const userId = deleteBtn.dataset.id;
+      if (confirm('Are you sure you want to delete this user?')) {
+        deleteUser(userId);
+      }
+    }
+  });
+}
+
+// User Form Submission
+if (userForm) {
+  userForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const userId = document.getElementById('user-id').value;
+    const form = new FormData();
+
+    form.append('name', document.getElementById('user-name').value);
+    form.append('email', document.getElementById('user-email').value);
+    form.append('role', document.getElementById('user-role').value);
+    form.append('password', process.env.USER_DEFAULT_PASSWORD);
+    form.append('passwordConfirm', process.env.USER_DEFAULT_PASSWORD);
+
+    const photoInput = document.getElementById('user-photo');
+    // console.log('Selected file:', photoInput.files[0]);
+    if (photoInput && photoInput.files[0]) {
+      form.append('photo', photoInput.files[0]);
+    }
+    // console.log(document.getElementById('user-name').value);
+    saveUser(form, userId);
+  });
+}
+
+import { fetchFilteredUsers } from './manageUsers';
+
+const searchUsersInput = document.getElementById('search-users');
+const filterRoleSelect = document.getElementById('filter-role');
+// const usersTableBody = document.getElementById('users-table-body');
+
+const renderUsersTable = (users) => {
+  if (!usersTableBody) return;
+
+  usersTableBody.innerHTML = users
+    .map(
+      (user) => `
+    <tr>
+      <td>
+        <img class="user-avatar" src=${user.photo.startsWith('http') ? user.photo : 'img/users/' + user.photo} alt="${user.name}">
+      </td>
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td><span class="badge badge--${user.role}">${user.role}</span></td>
+      <td>
+        <span class="badge ${user.active !== false ? 'badge--active' : 'badge--inactive'}">
+          ${user.active !== false ? 'Active' : 'Inactive'}
+        </span>
+      </td>
+      <td>
+        <div class="table-actions">
+          <button class="btn-action btn-action--edit" data-user='${JSON.stringify(user)}'>Edit</button>
+          <button class="btn-action btn-action--delete" data-id="${user._id || user.id}">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `,
+    )
+    .join('');
+};
+
+let debounceTimer;
+const handleFilterChange = () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(async () => {
+    const query = searchUsersInput ? searchUsersInput.value.trim() : '';
+    const role = filterRoleSelect ? filterRoleSelect.value : 'all';
+
+    const users = await fetchFilteredUsers(query, role);
+    if (users) renderUsersTable(users);
+  }, 350);
+};
+
+if (searchUsersInput)
+  searchUsersInput.addEventListener('input', handleFilterChange);
+if (filterRoleSelect)
+  filterRoleSelect.addEventListener('change', handleFilterChange);
+// ----------- manage users -----------------------
+
 if (mapBox) {
   const locations = JSON.parse(
     document.getElementById('map').dataset.locations,
