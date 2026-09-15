@@ -140,3 +140,17 @@ exports.getManageReviews = catchAsync(async (req, res, next) => {
     reviews,
   });
 });
+
+exports.getManageBookings = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Booking.find(), req.query)
+    .filter()
+    .sort('-createdAt')
+    .paginate();
+
+  const bookings = await features.query;
+
+  res.status(200).render('manageBookings', {
+    title: 'Manage Bookings',
+    bookings,
+  });
+});

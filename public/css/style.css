@@ -1415,11 +1415,11 @@ body {
   margin-right: 0.5rem;
 }
 .btn-action--edit {
-  background-color: #2998ff;
+  background-color: #2998ff !important;
   color: #fff;
 }
 .btn-action--delete {
-  background-color: #eb4d4b;
+  background-color: #eb4d4b !important;
   color: #fff;
 }
 
@@ -1542,7 +1542,8 @@ body {
   margin-bottom: 2rem;
 }
 
-.manage-table {
+.manage-table,
+.table--manage {
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
@@ -1552,14 +1553,17 @@ body {
 }
 
 .manage-table th,
-.manage-table td {
+.manage-table td,
+.table--manage th,
+.table--manage td {
   padding: 1.2rem 1.5rem;
   text-align: left;
   font-size: 1.4rem;
   border-bottom: 1px solid #eee;
 }
 
-.manage-table th {
+.manage-table th,
+.table--manage th {
   background-color: #f7f7f7;
   font-weight: 600;
   color: #555;
@@ -1619,13 +1623,6 @@ body {
   cursor: pointer;
 }
 
-.btn-action--edit {
-  color: #0984e3;
-}
-.btn-action--delete {
-  color: #d63031;
-}
-
 .manage-actions {
   display: flex;
   align-items: center;
@@ -1645,6 +1642,7 @@ body {
   padding: 0.8rem 1.4rem;
   font-size: 1.4rem;
   border-radius: 4px;
+  background-color: #fff;
   border: 1px solid #ccc;
   width: 26rem;
   transition: all 0.2s;
@@ -1656,27 +1654,7 @@ body {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
 }
 
-/* Table Layout Setup */
-.table--manage {
-  border-collapse: separate;
-  border-spacing: 0 16px;
-  width: 100%;
-  font-size: medium;
-}
-
-.table--manage tbody tr {
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  /* display: flex;
-  align-items: center;
-  justify-content: space-between; */
-}
-
-.table--manage td {
-  padding: 16px 20px;
-  /* display: flex;
-  align-items: center; */
-}
+/*  */
 
 /* Specific Column Widths */
 .table--manage th:nth-child(1) {
@@ -1715,9 +1693,7 @@ body {
   /* padding: 0.8rem 1rem; */
   /* background-color: #fcfcfc;
   */
-  border-radius: 10px;
-  border-left: 3px solid #55c57a;
-  border-right: 3px solid #55c57a;
+  border-bottom: 3px solid #55c57a;
 }
 
 /* User & Tour Column Alignment */
@@ -1763,4 +1739,31 @@ body {
 
 .btn-action--activate:hover {
   background-color: #28b487;
+}
+
+/* Table Layout Spacing */
+
+/* Status Badge Styles */
+.badge--status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge--paid {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.badge--unpaid {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.booking-price {
+  font-weight: 700;
+  color: #28b487;
 }

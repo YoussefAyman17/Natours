@@ -38,5 +38,6 @@ export const displayMap = (locations) => {
       left: 100,
       right: 100,
     },
+    // animate: false,
   });
 };

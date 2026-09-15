@@ -281,6 +281,9 @@ if (filterRatingSelect)
 
 // ------------------- manage reviews ------------------------
 
+window.addEventListener('DOMContentLoaded', () => {
+  window.scrollTo(0, 0);
+});
 if (mapBox) {
   const locations = JSON.parse(
     document.getElementById('map').dataset.locations,

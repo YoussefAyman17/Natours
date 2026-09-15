@@ -1,0 +1,41 @@
+extends base
+
+block content
+  main.main
+    .manage-container
+      .manage-header
+        h2.heading-secondary Manage Bookings
+        //- .manage-actions
+        //-   select#filter-status.form__input.form__input--select
+        //-     option(value='all') All Bookings
+        //-     option(value='paid') Paid
+        //-     option(value='unpaid') Unpaid
+
+      table.table.table--manage
+        thead
+          tr
+            th User
+            th Tour
+            th Price
+            th Status
+            th Booked Date
+        tbody#bookings-table-body
+          each booking in bookings
+            tr.table-booking-row(
+              data-id=booking.id 
+              data-status=booking.paid ? 'paid' : 'unpaid'
+            )
+              td
+                .table-user-info
+                  img.user-avatar(
+                    src=`${booking.user && booking.user.photo ? (booking.user.photo.startsWith('http') ? booking.user.photo : 'img/users/' + booking.user.photo) : 'img/users/default.jpg'}`, 
+                    alt=`${booking.user ? booking.user.name : 'Deleted User'}`
+                  )
+                  span= booking.user ? booking.user.name : 'Deleted User'
+              td= booking.tour ? booking.tour.name : 'Deleted Tour'
+              td
+                span.booking-price=`$${booking.price.toFixed(2)}`
+              td
+                span(class=`badge badge--status badge--${booking.paid ? 'paid' : 'unpaid'}`)
+                  = booking.paid ? 'Paid' : 'Unpaid'
+              td= booking.createdAt ? booking.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'
