@@ -3,7 +3,7 @@ extends base
 mixin reviewCardAccount(review)
   .reviews__card(data-review-id=`${review.id}` style='display: flex; flex-direction: column; align-items: center; padding: 4rem 3rem; background-color: #f7f7f7; border-radius: 5px; box-shadow: 0 1.5rem 4rem rgba(0,0,0,0.06);')
     .reviews__avatar(style='display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;')
-      img.reviews__avatar-img(src=`/img/tours/${review.tour.imageCover}`, alt=`${review.tour.name}` style='height: 8rem; width: 8rem; border-radius: 50%; margin-bottom: 1.5rem;')
+      img.reviews__avatar-img(src=`${review.tour.imageCover?review.tour.imageCover:'/img/tours/'+review.tour.imageCover}`, alt=`${review.tour.name}` style='height: 8rem; width: 8rem; border-radius: 50%; margin-bottom: 1.5rem;')
       h6.reviews__user(style='font-size: 1.4rem; text-transform: uppercase; font-weight: 700; text-align: center;')= review.tour.name
     
     .review-display(style='display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; height: 100%;')
