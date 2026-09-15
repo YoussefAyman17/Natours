@@ -126,3 +126,17 @@ exports.getManageUsers = catchAsync(async (req, res, next) => {
     users,
   });
 });
+
+exports.getManageReviews = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(Review.find(), req.query)
+    .filter()
+    .sort('-createdAt')
+    .paginate();
+
+  const reviews = await features.query;
+
+  res.status(200).render('manageReviews', {
+    title: 'Manage Reviews',
+    reviews,
+  });
+});

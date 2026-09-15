@@ -26,6 +26,12 @@ router.get(
   authController.restrictTo('admin'),
   viewController.getManageUsers,
 );
+router.get(
+  '/manage-reviews',
+  authController.protect,
+  authController.restrictTo('admin'),
+  viewController.getManageReviews,
+);
 
 router.post(
   '/submit-user-data',

@@ -1655,3 +1655,112 @@ body {
   border-color: #55c57a;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
 }
+
+/* Table Layout Setup */
+.table--manage {
+  border-collapse: separate;
+  border-spacing: 0 16px;
+  width: 100%;
+  font-size: medium;
+}
+
+.table--manage tbody tr {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* display: flex;
+  align-items: center;
+  justify-content: space-between; */
+}
+
+.table--manage td {
+  padding: 16px 20px;
+  /* display: flex;
+  align-items: center; */
+}
+
+/* Specific Column Widths */
+.table--manage th:nth-child(1) {
+  width: 20%;
+} /* User */
+.table--manage th:nth-child(2) {
+  width: 20%;
+} /* Tour */
+.table--manage th:nth-child(3) {
+  width: 12%;
+} /* Rating */
+.table--manage th:nth-child(4) {
+  width: 38%;
+} /* Review Text */
+.table--manage th:nth-child(5) {
+  width: 10%;
+} /* Date */
+
+/* Review Text Cell Enhancement */
+.cell-review-text {
+  font-size: 1.3rem;
+  color: #555;
+  /* line-height: 1.5; */
+  font-style: italic;
+
+  /* Multi-line truncation (2 lines max) */
+  /* display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* max-width: 100%;
+  height: 100%; */
+
+  /* Adds subtle styling */
+  /* padding: 0.8rem 1rem; */
+  /* background-color: #fcfcfc;
+  */
+  border-radius: 10px;
+  border-left: 3px solid #55c57a;
+  border-right: 3px solid #55c57a;
+}
+
+/* User & Tour Column Alignment */
+.table-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.table-user-info span {
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status Badge Variations */
+.badge--active {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.badge--inactive {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+/* Toggle Button Styling */
+.btn-action--deactivate {
+  background-color: #ff7730;
+  color: #fff;
+}
+
+.btn-action--deactivate:hover {
+  background-color: #eb5e17;
+}
+
+.btn-action--activate {
+  background-color: #55c57a;
+  color: #fff;
+}
+
+.btn-action--activate:hover {
+  background-color: #28b487;
+}

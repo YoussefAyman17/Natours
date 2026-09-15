@@ -1,0 +1,55 @@
+extends base
+
+block content
+  main.main
+    .manage-container
+      .manage-header
+        h2.heading-secondary Manage Reviews
+        .manage-actions
+          select#filter-rating.form__input.form__input--select
+            option(value='all') All Ratings
+            option(value='5') 5 Stars ⭐⭐⭐⭐⭐
+            option(value='4') 4 Stars ⭐⭐⭐⭐
+            option(value='3') 3 Stars ⭐⭐⭐
+            option(value='2') 2 Stars ⭐⭐
+            option(value='1') 1 Star ⭐
+      
+      table.table.table--manage
+        thead
+          tr
+            th User
+            th Tour
+            th Rating
+            th Review Text
+            th Date
+        tbody#reviews-table-body
+          each review in reviews
+            tr.table-review-row(data-id=review.id)
+              td
+                .table-user-info
+                  img.user-avatar(src=`${review.user && review.user.photo.startsWith('http') ? review.user.photo : 'img/users/'+(review.user ? review.user.photo : 'default.jpg')}`, alt=`${review.user ? review.user.name : 'Deleted User'}`)
+                  span= review.user ? review.user.name : 'Deleted User'
+              td= review.tour ? review.tour.name : 'N/A'
+              td
+                span.badge.badge--rating=`⭐ ${review.rating}`
+              td.cell-review-text(title=review.review)= review.review
+              td= review.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              //- td
+              //-   .table-actions
+              //-     button.btn-action.btn-action--edit.btn-edit-review.btn-open-review-modal(data-review=JSON.stringify(review)) Edit
+              //-     button.btn-action.btn-action--delete.btn-delete-review(data-id=review.id) Delete
+
+    //- #modal-edit-review.modal.hidden
+    //-   .modal__content
+    //-     button.modal__close#btn-close-review-modal &times;
+    //-     h3.heading-tertiary Edit Review
+    //-     form.form--edit-review#form-review
+    //-       input#edit-review-id(type='hidden')
+    //-       .form__group
+    //-         label.form__label Rating (1 - 5)
+    //-         input#edit-review-rating.form__input(type='number', min='1', max='5', step='1', required)
+    //-       .form__group
+    //-         label.form__label Review Content
+    //-         textarea#edit-review-text.form__input(rows='4', required)
+    //-       .form__group
+    //-         button.btn.btn--green Save Changes

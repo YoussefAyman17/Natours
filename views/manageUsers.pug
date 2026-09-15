@@ -7,6 +7,10 @@ block content
         h2.heading-secondary Manage Users
         .manage-actions
             input#search-users.form__input.form__input--search(type='text', placeholder='Search by name or email...')
+            select#filter-status.form__input.form__input--select
+              option(value='all') All Users
+              option(value='active') Active Only
+              option(value='inactive') Inactive Only
             select#filter-role.form__input.form__input--select
                 option(value='all') All Roles
                 option(value='user') User
@@ -39,7 +43,11 @@ block content
               td
                 .table-actions
                   button.btn-action.btn-action--edit(data-user=JSON.stringify(user)) Edit
-                  button.btn-action.btn-action--delete(data-id=user.id) Delete
+                  button.btn-action.btn-toggle-status(
+                    class=user.active ? 'btn-action--deactivate' : 'btn-action--activate'
+                    data-id=user.id 
+                    data-active=`${user.active}`
+                  )= user.active ? 'Deactivate' : 'Activate'
 
     //- Modal Window
     .modal.hidden#user-modal
@@ -70,6 +78,13 @@ block content
             img.form__user-photo#user-photo-preview(src='/img/users/default.jpg', alt='User photo')
             input.form__upload#user-photo(type='file', accept='image/*', name='photo')
             label(for='user-photo') Choose new photo
+
+          .form__group#form-password
+            label.form__label Password
+            input#create-password.form__input(type='password', minlength='8',name='password')
+          .form__group#form-password-confirm
+            label.form__label Confirm Password
+            input#create-password-confirm.form__input(type='password',name='passwordConfirm')
 
           .form__group
             button.btn.btn--green.btn--save-user Save Changes

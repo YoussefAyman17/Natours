@@ -14,10 +14,25 @@ class APIFeatures {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     const finalQuery = JSON.parse(queryStr);
 
-    // 1C) Add dynamic text search ($or for name or email)
+    // 1C) Dynamic text search based on Model Context
     if (this.queryString.search) {
       const searchRegex = new RegExp(this.queryString.search, 'i');
-      finalQuery.$or = [{ name: searchRegex }, { email: searchRegex }];
+
+      // Check if query target is User vs Review vs Tour
+      const modelName = this.query.model.modelName;
+
+      if (modelName === 'User') {
+        finalQuery.$or = [{ name: searchRegex }, { email: searchRegex }];
+      } else if (modelName === 'Review') {
+        finalQuery.review = searchRegex;
+      } else if (modelName === 'Tour') {
+        finalQuery.name = searchRegex;
+      }
+    }
+
+    // 1D) Handle numeric rating filter
+    if (this.queryString.rating && this.queryString.rating !== 'all') {
+      finalQuery.rating = Number(this.queryString.rating);
     }
 
     // Pass final constructed query object to Mongoose

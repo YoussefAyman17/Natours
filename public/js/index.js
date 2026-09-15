@@ -34,7 +34,7 @@ const locationTemplate = document.getElementById('location-template');
 
 // ########### manage users #####################
 
-import { saveUser, deleteUser } from './manageUsers';
+import { saveUser, toggleUserStatusByAdmin } from './manageUsers';
 const userModal = document.getElementById('user-modal');
 const userModalTitle = document.getElementById('user-modal-title');
 const userForm = document.getElementById('form-user');
@@ -50,6 +50,8 @@ if (openUserModalBtn) {
     document.getElementById('user-id').value = '';
     document.getElementById('user-photo-preview').src =
       '/img/users/default.jpg';
+    document.getElementById('form-password').style.display = '';
+    document.getElementById('form-password-confirm').style.display = '';
     userModalTitle.textContent = 'Add New User';
     userModal.classList.remove('hidden');
   });
@@ -68,7 +70,7 @@ if (userModal) {
 if (usersTableBody) {
   usersTableBody.addEventListener('click', (e) => {
     const editBtn = e.target.closest('.btn-action--edit');
-    const deleteBtn = e.target.closest('.btn-action--delete');
+    const toggleBtn = e.target.closest('.btn-toggle-status');
 
     if (editBtn) {
       const user = JSON.parse(editBtn.dataset.user);
@@ -76,6 +78,8 @@ if (usersTableBody) {
       document.getElementById('user-name').value = user.name;
       document.getElementById('user-email').value = user.email;
       document.getElementById('user-role').value = user.role;
+      document.getElementById('form-password').style.display = 'none';
+      document.getElementById('form-password-confirm').style.display = 'none';
       document.getElementById('user-photo-preview').src =
         `${user.photo.startsWith('http') ? user.photo : '/img/users/' + user.photo}`;
 
@@ -83,11 +87,11 @@ if (usersTableBody) {
       userModal.classList.remove('hidden');
     }
 
-    if (deleteBtn) {
-      const userId = deleteBtn.dataset.id;
-      if (confirm('Are you sure you want to delete this user?')) {
-        deleteUser(userId);
-      }
+    if (toggleBtn) {
+      const userId = toggleBtn.dataset.id;
+      const currentActiveState = toggleBtn.dataset.active === 'true';
+      const newActiveState = !currentActiveState;
+      toggleUserStatusByAdmin(userId, { active: newActiveState });
     }
   });
 }
@@ -103,8 +107,13 @@ if (userForm) {
     form.append('name', document.getElementById('user-name').value);
     form.append('email', document.getElementById('user-email').value);
     form.append('role', document.getElementById('user-role').value);
-    form.append('password', process.env.USER_DEFAULT_PASSWORD);
-    form.append('passwordConfirm', process.env.USER_DEFAULT_PASSWORD);
+    if (document.getElementById('create-password').value) {
+      form.append('password', document.getElementById('create-password').value);
+      form.append(
+        'passwordConfirm',
+        document.getElementById('create-password-confirm').value,
+      );
+    }
 
     const photoInput = document.getElementById('user-photo');
     // console.log('Selected file:', photoInput.files[0]);
@@ -120,6 +129,7 @@ import { fetchFilteredUsers } from './manageUsers';
 
 const searchUsersInput = document.getElementById('search-users');
 const filterRoleSelect = document.getElementById('filter-role');
+const filterStatusSelect = document.getElementById('filter-status');
 // const usersTableBody = document.getElementById('users-table-body');
 
 const renderUsersTable = (users) => {
@@ -143,7 +153,7 @@ const renderUsersTable = (users) => {
       <td>
         <div class="table-actions">
           <button class="btn-action btn-action--edit" data-user='${JSON.stringify(user)}'>Edit</button>
-          <button class="btn-action btn-action--delete" data-id="${user._id || user.id}">Delete</button>
+          <button class="btn-action btn-toggle-status ${user.active ? 'btn-action--deactivate' : 'btn-action--activate'}" data-id="${user._id || user.id}" ata-active='${user.active}'>${user.active ? 'Deactivate' : 'Activate'}</button>
         </div>
       </td>
     </tr>
@@ -158,8 +168,9 @@ const handleFilterChange = () => {
   debounceTimer = setTimeout(async () => {
     const query = searchUsersInput ? searchUsersInput.value.trim() : '';
     const role = filterRoleSelect ? filterRoleSelect.value : 'all';
+    const status = filterStatusSelect ? filterStatusSelect.value : 'all';
 
-    const users = await fetchFilteredUsers(query, role);
+    const users = await fetchFilteredUsers(query, role, status);
     if (users) renderUsersTable(users);
   }, 350);
 };
@@ -168,7 +179,107 @@ if (searchUsersInput)
   searchUsersInput.addEventListener('input', handleFilterChange);
 if (filterRoleSelect)
   filterRoleSelect.addEventListener('change', handleFilterChange);
+if (filterStatusSelect)
+  filterStatusSelect.addEventListener('change', handleFilterChange);
 // ----------- manage users -----------------------
+
+// ######### manage reviews ####################
+import {
+  fetchFilteredReviews,
+  // updateReviewByAdmin,
+  // deleteReviewByAdmin,
+} from './manageReviews';
+// const reviewModal = document.getElementById('modal-edit-review');
+// const editReviewForm = document.getElementById('form-review');
+// const closeReviewModalBtn = document.getElementById('btn-close-review-modal');
+// const closeReviewModal = () =>
+//   reviewModal && reviewModal.classList.add('hidden');
+
+// if (closeReviewModalBtn)
+//   closeReviewModalBtn.addEventListener('click', closeReviewModal);
+
+// if (reviewModal) {
+//   reviewModal.addEventListener('click', (e) => {
+//     if (e.target === reviewModal) closeReviewModal();
+//   });
+// }
+
+// if (editReviewForm) {
+//   editReviewForm.addEventListener('submit', (e) => {
+//     e.preventDefault();
+
+//     const reviewId = document.getElementById('edit-review-id').value;
+//     const payload = {
+//       rating: Number(document.getElementById('edit-review-rating').value),
+//       review: document.getElementById('edit-review-text').value.trim(),
+//     };
+
+//     updateReviewByAdmin(reviewId, payload);
+//   });
+// }
+
+// const searchReviewsInput = document.getElementById('search-reviews');
+const filterRatingSelect = document.getElementById('filter-rating');
+const reviewsTableBody = document.getElementById('reviews-table-body');
+
+// Dynamic Re-render Table
+const renderReviewsTable = (reviews) => {
+  if (!reviewsTableBody) return;
+  reviewsTableBody.innerHTML = reviews
+    .map(
+      (rev) => `
+    <tr data-id="${rev._id || rev.id}">
+      <td>
+        <div class="table-user-info">
+          <img class="user-avatar" src="${rev.user.photo.startsWith('http') ? rev.user.photo : '/img/users/' + rev.user.photo}" alt="${rev.user ? rev.user.name : 'User'}">
+          <span>${rev.user ? rev.user.name : 'Deleted User'}</span>
+        </div>
+      </td>
+      <td>${rev.tour ? rev.tour.name : 'N/A'}</td>
+      <td><span class="badge badge--rating">⭐ ${rev.rating}</span></td>
+      <td class="cell-review-text">${rev.review}</td>
+      <td>${new Date(rev.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+    </tr>
+  `,
+    )
+    .join('');
+};
+
+// Event Delegation for Table Buttons
+// if (reviewsTableBody) {
+//   reviewsTableBody.addEventListener('click', (e) => {
+//     if (e.target.classList.contains('btn-delete-review')) {
+//       const id = e.target.dataset.id;
+//       if (confirm('Are you sure you want to delete this review?')) {
+//         deleteReviewByAdmin(id);
+//       }
+//     }
+
+//     if (e.target.classList.contains('btn-edit-review')) {
+//       const review = JSON.parse(e.target.dataset.review);
+//       document.getElementById('edit-review-id').value = review._id || review.id;
+//       document.getElementById('edit-review-rating').value = review.rating;
+//       document.getElementById('edit-review-text').value = review.review;
+//       document.getElementById('modal-edit-review').classList.remove('hidden');
+//     }
+//   });
+// }
+
+// Search / Rating Filter Debounce
+let reviewDebounce;
+const handleReviewFilterChange = () => {
+  clearTimeout(reviewDebounce);
+  reviewDebounce = setTimeout(async () => {
+    const rating = filterRatingSelect ? filterRatingSelect.value : 'all';
+    const reviews = await fetchFilteredReviews(rating);
+    if (reviews) renderReviewsTable(reviews);
+  }, 350);
+};
+
+if (filterRatingSelect)
+  filterRatingSelect.addEventListener('change', handleReviewFilterChange);
+
+// ------------------- manage reviews ------------------------
 
 if (mapBox) {
   const locations = JSON.parse(

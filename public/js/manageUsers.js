@@ -1,13 +1,17 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
-export const fetchFilteredUsers = async (searchQuery, role) => {
+export const fetchFilteredUsers = async (searchQuery, role, status) => {
   try {
     const params = new URLSearchParams();
 
     // Send role parameter (e.g., ?role=admin)
     if (role && role !== 'all') {
       params.append('role', role);
+    }
+
+    if (status && status !== 'all') {
+      params.append('active', status === 'active');
     }
 
     // Send search parameter (e.g., ?search=john)
@@ -51,15 +55,16 @@ export const saveUser = async (data, id) => {
   }
 };
 
-export const deleteUser = async (id) => {
+export const toggleUserStatusByAdmin = async (id, data) => {
   try {
     const res = await axios({
-      method: 'DELETE',
+      method: 'PATCH',
       url: `/api/v1/users/${id}`,
+      data,
     });
 
-    if (res.status === 204 || res.data.status === 'success') {
-      showAlert('success', 'User deleted successfully!');
+    if (res.data.status === 'success') {
+      showAlert('success', 'Account Stautus Updated successfully!');
       window.setTimeout(() => {
         location.reload(true);
       }, 1500);

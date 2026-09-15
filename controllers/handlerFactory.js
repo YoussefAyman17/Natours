@@ -1,3 +1,4 @@
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('./../utils/apiFeatures');
 
@@ -53,6 +54,9 @@ exports.createOne = (Model) =>
   });
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    if (Model == 'User' && (req.body.password || req.body.passwordConfirm)) {
+      return next(AppError("can't update password from this route", 403));
+    }
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
