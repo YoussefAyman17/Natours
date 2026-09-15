@@ -43,7 +43,7 @@ reviewSchema.pre(/^find/, function () {
 reviewSchema.pre(/^find/, function () {
   this.populate({
     path: 'tour',
-    select: 'name',
+    select: 'name imageCover',
   });
 });
 
