@@ -31,7 +31,7 @@ block content
                 td= `${tour.ratingsAverage} ⭐ (${tour.ratingsQuantity})`
                 td.admin-table__actions
                   button.btn-action.btn-action--edit(data-tour=`${JSON.stringify(tour)}`) Edit
-                  button.btn-action.btn-action--delete(data-id=tour.id) Delete
+                  button.btn-action.btn-action--delete(data-id=tour._id) Delete
 
   // --- CREATE / EDIT TOUR MODAL ---
   .modal.hidden#tour-modal
@@ -147,3 +147,13 @@ block content
 
         .form__group.text-right
           button.btn.btn--green#btn-save-tour Save Tour
+
+  #modal-delete-tour.modal.hidden
+    .modal__content.modal__content--delete
+      button.modal__close#btn-close-delete-tour-modal &times;
+      h3.heading-tertiary Delete Tour
+      p.modal__text Are you sure you want to delete this tour? This action cannot be undone.
+      
+      .modal__actions
+        button.btn.btn--grey#btn-cancel-delete-tour Cancel
+        button.btn.btn--red#btn-confirm-delete-tour Delete

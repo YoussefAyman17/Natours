@@ -58,5 +58,7 @@ export const signUp = async (name, email, password, passwordConfirm) => {
     }
   } catch (err) {
     showAlert('error', err.response.data.message);
+    document.querySelector('.btn-signUp').textContent = 'SIGN UP';
+    document.querySelector('.btn-signUp').disabled = false;
   }
 };

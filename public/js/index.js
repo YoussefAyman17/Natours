@@ -4,7 +4,7 @@ import { displayMap } from './mapbox';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
 import { createReview, updateReview, deleteReview } from './review';
-import { saveTour, deleteTour } from './manageTours';
+import { saveTour, deleteTourByAdmin } from './manageTours';
 
 const loginForm = document.querySelector('.form--login');
 const signUpForm = document.querySelector('.form--signUp');
@@ -31,6 +31,42 @@ const tableBody = document.getElementById('tours-table-body');
 const locationsContainer = document.getElementById('locations-container');
 const addLocationBtn = document.getElementById('btn-add-location');
 const locationTemplate = document.getElementById('location-template');
+
+export const initPasswordToggles = () => {
+  const passwordInputs = document.querySelectorAll('input[type="password"]');
+
+  passwordInputs.forEach((input) => {
+    if (input.dataset.toggleInitialized) return;
+    input.dataset.toggleInitialized = 'true';
+
+    const wrapper = input.parentElement;
+    if (wrapper && !wrapper.classList.contains('password-field-wrapper')) {
+      wrapper.classList.add('password-field-wrapper');
+    }
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.type = 'button';
+    toggleBtn.className = 'btn-toggle-password';
+    toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
+
+    toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+
+      toggleBtn.innerHTML = isPassword
+        ? '<i class="bi bi-eye-slash"></i>'
+        : '<i class="bi bi-eye"></i>';
+    });
+
+    input.insertAdjacentElement('afterend', toggleBtn);
+  });
+};
+
+// Auto-run when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initPasswordToggles);
 
 // ########### manage users #####################
 
@@ -309,6 +345,7 @@ if (signUpForm) {
     const passwordConfirm = document.getElementById('passwordConfirm').value;
 
     document.querySelector('.btn-signUp').textContent = 'Creating...';
+    document.querySelector('.btn-signUp').disabled = true;
     signUp(name, email, password, passwordConfirm);
   });
 }
@@ -509,6 +546,41 @@ if (openModalBtn) {
 
 if (closeModalBtn) closeModalBtn.addEventListener('click', closeTourModal);
 
+const deleteModal = document.getElementById('modal-delete-tour');
+const btnCloseDeleteTour = document.getElementById(
+  'btn-close-delete-tour-modal',
+);
+const btnCancelDeleteTour = document.getElementById('btn-cancel-delete-tour');
+const btnConfirmDeleteTour = document.getElementById('btn-confirm-delete-tour');
+
+let selectedTourId = null;
+
+const openDeleteModal = (tourId) => {
+  selectedTourId = tourId;
+  deleteModal.classList.remove('hidden');
+};
+
+const closeDeleteModal = () => {
+  selectedTourId = null;
+  deleteModal.classList.add('hidden');
+};
+if (btnCloseDeleteTour) {
+  btnCloseDeleteTour.addEventListener('click', closeDeleteModal);
+}
+if (btnCancelDeleteTour) {
+  btnCancelDeleteTour.addEventListener('click', closeDeleteModal);
+}
+if (btnConfirmDeleteTour) {
+  btnConfirmDeleteTour.addEventListener('click', async () => {
+    if (!selectedTourId) return;
+
+    btnConfirmDeleteTour.textContent = 'Deleting...';
+    btnConfirmDeleteTour.disabled = true;
+    await deleteTourByAdmin(selectedTourId);
+    closeDeleteModal();
+  });
+}
+
 if (tourForm) {
   tourForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -596,6 +668,11 @@ if (tableBody) {
   tableBody.addEventListener('click', (e) => {
     const editBtn = e.target.closest('.btn-action--edit');
     const deleteBtn = e.target.closest('.btn-action--delete');
+    if (deleteBtn) {
+      const tourId = deleteBtn.dataset.id;
+      console.log(tourId);
+      openDeleteModal(tourId);
+    }
 
     if (editBtn) {
       const tour = JSON.parse(editBtn.dataset.tour);
@@ -648,13 +725,6 @@ if (tableBody) {
 
       modalTitle.textContent = 'Edit Tour';
       tourModal.classList.remove('hidden');
-    }
-
-    if (deleteBtn) {
-      const tourId = deleteBtn.dataset.id;
-      if (confirm('Are you sure you want to delete this tour?')) {
-        deleteTour(tourId);
-      }
     }
   });
 }

@@ -28,7 +28,7 @@ export const saveTour = async (data, tourId) => {
   }
 };
 
-export const deleteTour = async (tourId) => {
+export const deleteTourByAdmin = async (tourId) => {
   try {
     const res = await axios({
       method: 'DELETE',

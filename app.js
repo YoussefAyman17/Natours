@@ -50,8 +50,13 @@ app.use(
         "'unsafe-inline'",
         'https://fonts.googleapis.com',
         'https://unpkg.com',
+        'https://cdn.jsdelivr.net',
       ],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      fontSrc: [
+        "'self'",
+        'https://fonts.gstatic.com',
+        'https://cdn.jsdelivr.net',
+      ],
       imgSrc: [
         "'self'",
         'data:',
