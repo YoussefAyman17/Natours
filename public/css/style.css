@@ -1076,7 +1076,6 @@ body {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 7rem;
 }
-
 .card {
   border-radius: 3px;
   overflow: hidden;
